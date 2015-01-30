@@ -1,3 +1,4 @@
 #!/bin/sh
 
-qemu -fda image.vfd 
+# we booting from harddisk 
+qemu -hda image.vfd 

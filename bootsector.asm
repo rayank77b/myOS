@@ -1,32 +1,49 @@
 BITS 16
-start:
-org 7c00h           ; we set our offset to RAM 7c00
+org 7c00h                   ; we set our offset to RAM 0x7c00
 
-%macro printString 1
-mov si, %1	; Put string position into SI
-call print_string	; Call our string-printing routine
-%endmacro
+%INCLUDE "macros/print.inc"
+
+; main
+
+mov [diskNumber], dl            ; store flopy driver?
+
+printLine strMyName
+
+printLine strRDStatus
+
+xor ax, ax
+mov es, ax    ; ES <- 0
+mov cx, 1     ; cylinder 0, sector 1
+mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
+mov bx, 7e00h ; segment offset of the buffer
+mov ax, 0201h ; AH = 02 (disk read), AL = 01 (number of sectors to read)
+int 13h       
+; test we write it
+mov si, strDiskOk
+add si, 200h
+call print_string
 
 
-printString myName
+xor ax, ax
+mov es, ax    ; ES <- 0
+mov cx, 2     ; cylinder 0, sector 1
+mov dx, 0080h ; DH = 0 (head), drive = 80h (0th hard disk)
+mov bx, 7e00h ; segment offset of the buffer
+mov ax, 0210h ; AH = 02 (disk read), AL = 10 (number of sectors to read)
+int 13h       ; read 16*512=8kB of data to memory
 
-jmp $			    ; Jump here - infinite loop!
+jmp 7e00h			            ; jump to kernel
+
+%INCLUDE "routines/print.asm"
+
+; data -------------------------------------------------------------------------
+strMyName       db 'myOS starting...', 0
+diskNumber      db 0,0
+strRDStatus     db 'Read Disk Status:..', 0
+strDiskFail     db 'disk fail', 0
+strDiskOk       db 'disk ok',0
 
 
-myName db 'myOS starting...', 0
 
-; Routine: output string in SI to screen
-; argv: SI pointer to string
-print_string:			
-	mov ah, 0Eh		    ; int 10h 'print char' function
-.repeat:
-	lodsb			    ; Get character from string
-	cmp al, 0
-	je .done		    ; If char is zero, end of string
-	int 10h			    ; Otherwise, print it
-	jmp .repeat
-.done:
-	ret
-
-times 510-($-$$) db 0	; Pad remainder of boot sector with 0s
+times 510-($-$$) db 0	
 dw 0xAA55
