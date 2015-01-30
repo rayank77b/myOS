@@ -1,1 +1,35 @@
-nasm -f bin startme.asm
+nasm -f bin bootsector.asm
+
+
+# disasm
+ndism
+
+
+
+
+# build the image
+# build the bootsector
+nasm -f bin bootsector.asm
+dd if=/dev/zero of=tmp1 bs=512 count=2879
+cp bootsector image.vfd
+cat tmp1 >> image.vfd
+rm -rf tmp1
+
+
+
+
+############ old stuff################
+# build the image
+# build the bootsector
+nasm -f bin bootsector.asm
+rm -rf image.bin
+cp bootsector image.bin
+filelen=$(ls -l bootsector | tr -s " " | awk '{print $5}')
+typeset  -i count
+count=512-$filelen-2
+dd if=/dev/zero of=tmp1 bs=$count count=1
+cat tmp1 >> image.bin
+rm -rf tmp1
+echo -e -n "\x55\xAA" >> image.bin
+
+
