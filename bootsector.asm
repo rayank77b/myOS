@@ -1,10 +1,14 @@
 BITS 16
-
 start:
 org 7c00h           ; we set our offset to RAM 7c00
 
-mov si, myName	; Put string position into SI
+%macro printString 1
+mov si, %1	; Put string position into SI
 call print_string	; Call our string-printing routine
+%endmacro
+
+
+printString myName
 
 jmp $			    ; Jump here - infinite loop!
 
