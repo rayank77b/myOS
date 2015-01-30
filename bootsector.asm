@@ -1,35 +1,28 @@
+BITS 16
+
+start:
+org 7c00h           ; we set our offset to RAM 7c00
+
+mov si, myName	; Put string position into SI
+call print_string	; Call our string-printing routine
+
+jmp $			    ; Jump here - infinite loop!
 
 
-xor ax,ax       ; set video modus: 80x25
-mov al, 03h
-int 10h
+myName db 'myOS starting...', 0
 
-mov ah, 9  ; Write instruction for int 0x10
-mov al, 64 ; A
-mov bh, 0  ; Page number
-mov bl, 4  ; Red on black (00000100 - High 0000 is black, low 0100 is red)
-mov cx, 2  ; Writes one character
-int 0x10
-mov ah, 9  ; Write instruction for int 0x10
-mov al, 65 ; A
-mov bh, 0  ; Page number
-mov bl, 4  ; Red on black (00000100 - High 0000 is black, low 0100 is red)
-mov cx, 3  ; Writes one character
-int 0x10
-mov ah, 9  ; Write instruction for int 0x10
-mov al, 66 ; A
-mov bh, 0  ; Page number
-mov bl, 4  ; Red on black (00000100 - High 0000 is black, low 0100 is red)
-mov cx, 4  ; Writes one character
-int 0x10
-mov ah, 9  ; Write instruction for int 0x10
-mov al, 41 ; A
-mov bh, 0  ; Page number
-mov bl, 4  ; Red on black (00000100 - High 0000 is black, low 0100 is red)
-mov cx, 5  ; Writes one character
-int 0x10
-
-
+; Routine: output string in SI to screen
+; argv: SI pointer to string
+print_string:			
+	mov ah, 0Eh		    ; int 10h 'print char' function
+.repeat:
+	lodsb			    ; Get character from string
+	cmp al, 0
+	je .done		    ; If char is zero, end of string
+	int 10h			    ; Otherwise, print it
+	jmp .repeat
+.done:
+	ret
 
 times 510-($-$$) db 0	; Pad remainder of boot sector with 0s
 dw 0xAA55

@@ -15,8 +15,13 @@ cp bootsector image.vfd
 cat tmp1 >> image.vfd
 rm -rf tmp1
 
+# starting
+qemu -fda image.vfd 
 
 
+# Infos:
+http://mikeos.sourceforge.net/write-your-own-os.html
+http://forum.osdev.org/viewtopic.php?f=1&t=23968
 
 ############ old stuff################
 # build the image
