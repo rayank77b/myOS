@@ -6,7 +6,7 @@ phase One:
 *  simple real modus
 *  only Assembler
 *  simple output
-*  simple network
+*  simple file input with write to disk file
 
 our memory layout is real mode, we dont use segments
 
@@ -16,3 +16,8 @@ our memory layout is real mode, we dont use segments
 0x0007FFFF is our upper segment stack
 
 
+file is 1440 kB big  2880 512Byte sectors
+
+Sector 0:  bootloader
+Sector 1-16: kernel,  16 sectors -> 8kByte
+Sector 100-x: command file to execute

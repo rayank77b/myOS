@@ -19,6 +19,13 @@ printString strESP
 push strESP
 mov eax, esp
 call outputEAX2Hex
+call print_newline
+
+; get RAM size
+xor ax, ax
+int 0x12
+call outputEAX2Hex
+call print_newline
 
 jmp $
 
