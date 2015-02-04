@@ -1,10 +1,10 @@
 # myOS
-my simple OS in real mode with NASM
+my simple OS
 
 phase One:
 *  testing only in qemu
 *  simple real modus
-*  only Assembler
+*  only Assembler (at moment NASM)
 *  simple output
 *  simple file input with write to disk file
 
