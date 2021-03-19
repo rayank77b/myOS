@@ -6,7 +6,7 @@ mov al, %2
 mov [ypos], al
 %endmacro
 
-;-----------------------------------------
+;----- Main --------------------------
 ; after bios we start at 0x7c00
 [org 0x7c00]
 
@@ -20,6 +20,8 @@ mov [ypos], al
 
 	cld	; clear direction
 	cli	; deaktivate interrupts	
+
+    call cls
 
     mov bx, 320 ; 2x160
     mov ax, 0x0f41
@@ -41,7 +43,23 @@ hang:
     jmp hang
 
 
-;---------------------------------------
+;--------- Functions --------------------
+
+; clear screen
+cls:
+    push ax
+    push bx
+    xor bx, bx
+    mov ax, 0x0020 ; black space
+cls_loop:
+    mov [es:bx], ax
+    add bx, 2
+    cmp bx, 0x07d0
+    jne cls_loop
+    pop bx
+    pop ax
+    ret
+
 
 ; si - message address
 printk:
