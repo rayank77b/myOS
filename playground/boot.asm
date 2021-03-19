@@ -38,12 +38,34 @@ mov [ypos], al
     mov si, msg
     call printk
 
+    call scroll
+    call scroll
+
 hang:
     hlt
     jmp hang
 
 
 ;--------- Functions --------------------
+
+; scroll the screen one line up
+scroll:
+    push ax
+    push si
+    push di
+    mov di, 0
+    mov si, 160
+scroll_loop:
+    mov ax, [es:si]
+    mov [es:di], ax
+    add di, 2
+    add si, 2
+    cmp di, 4000    ; 80x25
+    jne scroll_loop
+    pop di
+    pop si
+    pop ax
+    ret
 
 ; clear screen
 cls:
