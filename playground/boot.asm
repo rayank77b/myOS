@@ -1,10 +1,22 @@
-%macro setpos 2
-xor ax, ax
-mov al, %1
-mov [xpos], al
-mov al, %2
-mov [ypos], al
+%macro m_setpos 2
+    xor ax, ax
+    mov al, %1
+    mov [xpos], al
+    mov al, %2
+    mov [ypos], al
 %endmacro
+
+%macro m_putc 2
+    mov bx, %2   
+    mov ax, %1
+    call putc
+%endmacro
+
+%macro m_printk 1
+    mov si, %1
+    call printk
+%endmacro
+
 
 ;----- Main --------------------------
 ; after bios we start at 0x7c00
@@ -23,28 +35,24 @@ mov [ypos], al
 
     call cls
 
-    mov bx, 320 ; 2x160
-    mov ax, 0x0f41
-    call putc
-    mov ax, 0x0f42
-    add bx, 2
-    call putc
+    m_putc 0x0f41,320   ; 2x160, A
+    m_putc 0x0f42,322   ; next B
 
-	setpos 4,12
-    mov si, msg
-    call printk
+	m_setpos 4,12
+    m_printk msg
 
-    setpos 0,24
-    mov si, msg
-    call printk
+    m_setpos 0,23
+    m_printk msg
 
-    call scroll
-    call scroll
+    m_setpos 0,5
+    m_printk msg2
+
+    ;call scroll
+    ;call scroll
 
 hang:
     hlt
     jmp hang
-
 
 ;--------- Functions --------------------
 
@@ -88,20 +96,34 @@ printk:
     push ax
     push bx
     push dx
-    xor ax, ax
     xor bx, bx
     mov bl, [xpos]
-    shl bx, 1 ; x2
+    shl bx, 1       ; x2
+    xor ax, ax
     mov al, [ypos]
     mov dx, 160
     mul dx
-    add bx, ax
-    mov ah, 0x0f ; black/white
+    add ax, bx
+    mov bx, ax
 printk_load_next:
-    lodsb ; load to al, from [si]
+    lodsb           ; load to al, from [si]
     cmp al, 0
     je printk_end
-    mov ah, 0x0f ; black/white
+    cmp al, 10      ; \n newline
+    jne printk_next
+    mov byte [xpos], 0
+    push ax
+    xor ax, ax
+    mov al, [ypos]
+    add ax, 1
+    mov [ypos], al
+    mov dx, 160
+    mul dx
+    mov bx, ax
+    pop ax
+    jmp printk_load_next
+printk_next:
+    mov ah, 0x0f  ; black/white
     mov [es:bx], ax
     add bx, 2
     jmp printk_load_next
@@ -123,8 +145,8 @@ putc:
 xpos db 0       ; x-position in video buffer. is 2xbytes!
 ypos db 0       ; column in video buffer.
 
-msg db 'Hello Kernel. MyOS', 10, ' Version: 0.1', 10, 0
-
+msg  db 'Hello Kernel. MyOS', 10, 'Version: 0.1', 10, 0
+msg2 db 'ABC',10,'ABC',10,'EEEFWF',10,'2349A',0 
 
 times 510-($-$$) db 0	; fill rest with zeros
 dw	 0xAA55		; magic byte
