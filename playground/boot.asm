@@ -47,8 +47,8 @@
     m_setpos 0,5
     m_printk msg2
 
-    ;call scroll
-    ;call scroll
+    call scroll
+    call scroll
 
 hang:
     hlt
