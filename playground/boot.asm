@@ -100,12 +100,10 @@ printk:
     push bx
     push dx
     push cx
-    xor bx, bx
-    mov bl, [xpos]
+    movzx bx, byte[xpos]
     mov cx, bx      ; for count
     shl bx, 1       ; x2
-    xor ax, ax
-    mov al, [ypos]
+    movzx ax, byte[ypos]
     mov dx, 160
     mul dx
     add ax, bx
