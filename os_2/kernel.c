@@ -95,8 +95,14 @@ void terminal_putchar(char c)
  
 void terminal_write(const char* data, size_t size) 
 {
-	for (size_t i = 0; i < size; i++)
-		terminal_putchar(data[i]);
+	for (size_t i = 0; i < size; i++) {
+        if ( data[i] != '\n' )
+		    terminal_putchar(data[i]);
+        else {
+            terminal_column = 0;
+            terminal_row++;
+        }
+    }
 }
  
 void terminal_writestring(const char* data) 
@@ -110,5 +116,34 @@ void kernel_main(void)
 	terminal_initialize();
  
 	/* Newline support is left as an exercise. */
-	terminal_writestring("Hello, kernel World!\n");
+	terminal_writestring("Hello, kernel World!\n");    
+    terminal_writestring("2\n");
+    terminal_writestring("3\n");
+    terminal_writestring("4\n");
+    terminal_writestring("5\n");
+    terminal_writestring("6\n");
+    terminal_writestring("7\n");
+    terminal_writestring("8\n");
+    terminal_writestring("9\n");
+    terminal_writestring("10\n");   
+    terminal_writestring("11\n");
+    terminal_writestring("12\n");
+    terminal_writestring("13\n");
+    terminal_writestring("14\n");
+    terminal_writestring("15\n");
+    terminal_writestring("16\n");
+    terminal_writestring("17\n");
+    terminal_writestring("18\n");
+    terminal_writestring("19\n");
+    terminal_writestring("20\n");
+    terminal_writestring("21\n");
+    terminal_writestring("22\n");
+    terminal_writestring("23\n");
+    terminal_writestring("24\n");
+    terminal_writestring("25\n");
+    terminal_writestring("26\n");
+    terminal_writestring("27\n");
+    terminal_writestring("28\n");
+    terminal_writestring("29\n");
+    terminal_writestring("30\n");
 }
